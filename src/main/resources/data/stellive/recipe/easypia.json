@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "E": "minecraft:emerald",
+    "D": "minecraft:diamond",
+    "Q": "minecraft:quartz"
+  },
+  "pattern": [
+    " E ",
+    "DE ",
+    " Q "
+  ],
+  "result": {
+    "id": "stellive:easypia",
+    "count": 1
+  }
+}

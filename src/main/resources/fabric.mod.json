@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "stellive",
+  "version": "${version}",
+  "name": "Stellive",
+  "description": "이지피아 검을 추가하는 Stellive 모드 (공격력 11, 공격속도 1.6, 내구도 무한)",
+  "authors": [
+    "stellive"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.easypia.EasypiaMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
