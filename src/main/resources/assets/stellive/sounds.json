@@ -1,0 +1,12 @@
+{
+  "easypia.block": {
+    "sounds": [
+      {
+        "name": "minecraft:block.chain.hit",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 2.0
+      }
+    ]
+  }
+}

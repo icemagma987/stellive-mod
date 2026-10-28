@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.CreativeModeTab;
@@ -68,18 +70,18 @@ public class ModItems {
 	 * 주의: Items.SHIELD.components() 는 아이템 등록 중에는 아직 준비되지 않아서
 	 * (Components not bound yet) 복사하면 게임이 켜지다 터집니다. 그래서 값을 직접 적습니다.
 	 *
-	 * - 막기 딜레이 0.25초, 정면 90도, 피해 100% 차단 (바닐라 방패와 동일)
+	 * - 막기 딜레이 없음, 정면 90도, 피해 100% 차단 (바닐라 방패와 동일)
 	 * - disableCooldownScale = 0 이면 도끼 등 어떤 공격으로도 막기가 비활성화되지 않습니다.
 	 * - 내구도는 무한이라 막다가 부서지지도 않습니다.
 	 */
 	private static BlocksAttacks undisableableShieldBlocking() {
 		return new BlocksAttacks(
-			0.25F,
+			0.0F, // 막기 딜레이 없음 (우클릭 즉시 막힘)
 			0.0F,
 			List.of(new BlocksAttacks.DamageReduction(90.0F, Optional.empty(), 0.0F, 1.0F)),
 			new BlocksAttacks.ItemDamageFunction(3.0F, 1.0F, 1.0F),
 			Optional.empty(), // 26.3 에서는 태그가 아니라 HolderSet 이라 등록 시점에 만들 수 없음
-			Optional.of(SoundEvents.SHIELD_BLOCK),
+			Optional.of(Holder.direct(SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(EasypiaMod.MOD_ID, "easypia.block")))), // 금속 소리 (sounds.json: block.chain.hit, 피치 2)
 			Optional.of(SoundEvents.SHIELD_BREAK)
 		);
 	}
