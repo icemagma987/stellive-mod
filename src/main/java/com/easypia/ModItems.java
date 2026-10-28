@@ -15,7 +15,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -79,7 +78,7 @@ public class ModItems {
 			0.0F,
 			List.of(new BlocksAttacks.DamageReduction(90.0F, Optional.empty(), 0.0F, 1.0F)),
 			new BlocksAttacks.ItemDamageFunction(3.0F, 1.0F, 1.0F),
-			Optional.of(DamageTypeTags.BYPASSES_SHIELD),
+			Optional.empty(), // 26.3 에서는 태그가 아니라 HolderSet 이라 등록 시점에 만들 수 없음
 			Optional.of(SoundEvents.SHIELD_BLOCK),
 			Optional.of(SoundEvents.SHIELD_BREAK)
 		);
