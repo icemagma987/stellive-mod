@@ -3,11 +3,13 @@ package com.easypia;
 import java.util.function.Function;
 
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Unit;
@@ -18,7 +20,7 @@ import net.minecraft.world.item.ToolMaterial;
 
 public class ModItems {
 	/**
-	 * 이지피아 (철검 텍스처)
+	 * 이지피아 (전용 3D 모델)
 	 *
 	 * 검의 최종 공격력 = 1(기본) + attackDamage + 재질 보너스(철 = 2)
 	 *   -> 1 + 8 + 2 = 11
@@ -58,7 +60,32 @@ public class ModItems {
 		return item;
 	}
 
+	/**
+	 * 이름 색: 왼쪽은 진한 초록, 오른쪽으로 갈수록 칼날 색에 가까운 연한 민트 초록
+	 */
+	private static final String EASYPIA_NAME = "이지피아";
+	private static final int[] EASYPIA_NAME_COLORS = {
+		0x1E8C5A, // 이 - 진한 초록
+		0x34B07A, // 지
+		0x62D3A2, // 피
+		0x9EEBCB  // 아 - 연한 민트 초록
+	};
+
+	private static Component gradientName() {
+		MutableComponent name = Component.empty();
+		for (int i = 0; i < EASYPIA_NAME.length(); i++) {
+			int color = EASYPIA_NAME_COLORS[Math.min(i, EASYPIA_NAME_COLORS.length - 1)];
+			name.append(Component.literal(String.valueOf(EASYPIA_NAME.charAt(i))).withColor(color));
+		}
+		return name;
+	}
+
 	public static void initialize() {
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, STELLIVE_TAB_KEY, STELLIVE_TAB);
+
+		// 아이템 기본 이름을 그라데이션 이름으로 교체
+		DefaultItemComponentEvents.MODIFY.register(context ->
+			context.modify(EASYPIA, builder -> builder.set(DataComponents.ITEM_NAME, gradientName()))
+		);
 	}
 }
