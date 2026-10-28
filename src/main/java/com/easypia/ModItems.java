@@ -16,7 +16,10 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.component.BlocksAttacks;
+import net.minecraft.world.item.component.TooltipDisplay;
 
 public class ModItems {
 	/**
@@ -37,6 +40,10 @@ public class ModItems {
 		new Item.Properties()
 			.sword(ToolMaterial.IRON, 8.0F, -2.4F)
 			.component(DataComponents.UNBREAKABLE, Unit.INSTANCE)
+			// 내구도 무한은 유지하고, 툴팁의 "부서지지 않음" 문구만 숨깁니다
+			.component(DataComponents.TOOLTIP_DISPLAY, TooltipDisplay.DEFAULT.withHidden(DataComponents.UNBREAKABLE, true))
+			// 우클릭으로 방패처럼 막기 (성능은 바닐라 방패와 동일, 도끼 등으로 비활성화되지 않음)
+			.component(DataComponents.BLOCKS_ATTACKS, undisableableShieldBlocking())
 	);
 
 	// 크리에이티브 인벤토리 전용 탭 (오른쪽 위 페이지 넘기기에서 보이는 탭)
@@ -52,6 +59,28 @@ public class ModItems {
 			output.accept(EASYPIA);
 		})
 		.build();
+
+	/**
+	 * 바닐라 방패(Items.SHIELD)의 막기 설정을 그대로 복사하되,
+	 * disableCooldownScale 만 0으로 바꿉니다.
+	 *
+	 * - 막는 각도, 막기 시작 딜레이(0.25초), 막는 소리, 막지 못하는 피해 종류 등은 방패와 동일합니다.
+	 * - disableCooldownScale = 0 이면 도끼(플레이어, 빈디케이터, 피글린 브루트 등 모든 공격자)가
+	 *   방패를 비활성화(내려놓게 하기 + 재사용 대기)하는 효과가 전혀 통하지 않습니다.
+	 * - 내구도는 무한이라 막다가 부서지지도 않습니다.
+	 */
+	private static BlocksAttacks undisableableShieldBlocking() {
+		BlocksAttacks vanilla = Items.SHIELD.components().get(DataComponents.BLOCKS_ATTACKS);
+		return new BlocksAttacks(
+			vanilla.blockDelaySeconds(),
+			0.0F,
+			vanilla.damageReductions(),
+			vanilla.itemDamage(),
+			vanilla.bypassedBy(),
+			vanilla.blockSound(),
+			vanilla.disableSound()
+		);
+	}
 
 	public static <T extends Item> T register(String name, Function<Item.Properties, T> itemFactory, Item.Properties settings) {
 		ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(EasypiaMod.MOD_ID, name));
