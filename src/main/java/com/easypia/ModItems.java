@@ -1,5 +1,7 @@
 package com.easypia;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
@@ -12,11 +14,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.component.BlocksAttacks;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -61,24 +64,24 @@ public class ModItems {
 		.build();
 
 	/**
-	 * 바닐라 방패(Items.SHIELD)의 막기 설정을 그대로 복사하되,
-	 * disableCooldownScale 만 0으로 바꿉니다.
+	 * 바닐라 방패와 같은 값으로 직접 만든 막기 설정 (disableCooldownScale 만 0).
 	 *
-	 * - 막는 각도, 막기 시작 딜레이(0.25초), 막는 소리, 막지 못하는 피해 종류 등은 방패와 동일합니다.
-	 * - disableCooldownScale = 0 이면 도끼(플레이어, 빈디케이터, 피글린 브루트 등 모든 공격자)가
-	 *   방패를 비활성화(내려놓게 하기 + 재사용 대기)하는 효과가 전혀 통하지 않습니다.
+	 * 주의: Items.SHIELD.components() 는 아이템 등록 중에는 아직 준비되지 않아서
+	 * (Components not bound yet) 복사하면 게임이 켜지다 터집니다. 그래서 값을 직접 적습니다.
+	 *
+	 * - 막기 딜레이 0.25초, 정면 90도, 피해 100% 차단 (바닐라 방패와 동일)
+	 * - disableCooldownScale = 0 이면 도끼 등 어떤 공격으로도 막기가 비활성화되지 않습니다.
 	 * - 내구도는 무한이라 막다가 부서지지도 않습니다.
 	 */
 	private static BlocksAttacks undisableableShieldBlocking() {
-		BlocksAttacks vanilla = Items.SHIELD.components().get(DataComponents.BLOCKS_ATTACKS);
 		return new BlocksAttacks(
-			vanilla.blockDelaySeconds(),
+			0.25F,
 			0.0F,
-			vanilla.damageReductions(),
-			vanilla.itemDamage(),
-			vanilla.bypassedBy(),
-			vanilla.blockSound(),
-			vanilla.disableSound()
+			List.of(new BlocksAttacks.DamageReduction(90.0F, Optional.empty(), 0.0F, 1.0F)),
+			new BlocksAttacks.ItemDamageFunction(3.0F, 1.0F, 1.0F),
+			Optional.of(DamageTypeTags.BYPASSES_SHIELD),
+			Optional.of(SoundEvents.SHIELD_BLOCK),
+			Optional.of(SoundEvents.SHIELD_BREAK)
 		);
 	}
 
