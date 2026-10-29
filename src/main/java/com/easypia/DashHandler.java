@@ -103,8 +103,6 @@ public class DashHandler {
 					? EXECUTE_DAMAGE
 					: DASH_DAMAGE;
 
-				// 무적 시간 때문에 피해가 깎이지 않도록 초기화
-				target.invulnerableTime = 0;
 				target.hurtServer(level, player.damageSources().playerAttack(player), damage);
 
 				// 검궤적 파티클 3개

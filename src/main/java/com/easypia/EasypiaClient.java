@@ -35,7 +35,6 @@ public class EasypiaClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		dashKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 			"key.stellive.dash",
-			InputConstants.Type.KEYSYM,
 			InputConstants.KEY_R,
 			CATEGORY
 		));
