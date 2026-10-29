@@ -20,14 +20,14 @@ public class ModBlocks {
 	/**
 	 * 피아 광석
 	 * - 단단함 24 (고대 잔해 30의 0.8배)
-	 * - 폭발 저항 3 (일반 광석과 같음) -> 폭발로 부서지지만 아이템은 안 나옴 (loot_table 참고)
+	 * - 폭발 저항 1200 (고대 잔해와 같음) -> 폭발로 부서지지 않음
 	 * - 네더라이트 곡괭이로만 캘 수 있음 (data/minecraft/tags/block/incorrect_for_*.json 참고)
 	 */
 	public static final Block PIA_ORE = register("pia_ore",
 		BlockBehaviour.Properties.of()
 			.mapColor(MapColor.STONE)
 			.requiresCorrectToolForDrops()
-			.strength(24.0F, 3.0F)
+			.strength(24.0F, 1200.0F)
 			.sound(SoundType.STONE));
 
 	public static final Item PIA_ORE_ITEM = registerBlockItem("pia_ore", PIA_ORE);
