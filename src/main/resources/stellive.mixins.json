@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.easypia.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ItemCooldownsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

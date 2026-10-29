@@ -35,7 +35,7 @@ public class DashHandler {
 	/** 대쉬 판정이 유지되는 시간 (틱, 20틱 = 1초) */
 	public static final int DASH_TICKS = 16;
 	/** 대쉬 재사용 대기시간 (틱) */
-	public static final int COOLDOWN_TICKS = 20;
+	public static final int COOLDOWN_TICKS = 13 * 20; // 13초
 	/** 플레이어 주변 몇 칸까지 맞는지 */
 	private static final double HIT_RANGE = 1.5;
 	private static final float DASH_DAMAGE = 22.0F;
@@ -69,6 +69,9 @@ public class DashHandler {
 		Long last = LAST_DASH.get(player.getUUID());
 		if (last != null && now - last < COOLDOWN_TICKS) return;
 		LAST_DASH.put(player.getUUID(), now);
+
+		// 엔더 진주처럼 아이템 칸에 쿨타임 표시 (서버가 걸면 클라이언트에 자동으로 전달됨)
+		player.getCooldowns().addCooldown(player.getMainHandItem(), COOLDOWN_TICKS);
 
 		DASHING.put(player.getUUID(), new DashState());
 
