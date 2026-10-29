@@ -50,6 +50,9 @@ public class ModItems {
 			.component(DataComponents.BLOCKS_ATTACKS, undisableableShieldBlocking())
 	);
 
+	/** 피아 (피아 광석에서 나오는 재료) */
+	public static final Item PIA = register("pia", Item::new, new Item.Properties());
+
 	// 크리에이티브 인벤토리 전용 탭 (오른쪽 위 페이지 넘기기에서 보이는 탭)
 	public static final ResourceKey<CreativeModeTab> STELLIVE_TAB_KEY = ResourceKey.create(
 		BuiltInRegistries.CREATIVE_MODE_TAB.key(),
@@ -61,6 +64,8 @@ public class ModItems {
 		.title(Component.translatable("creativeTab.stellive"))
 		.displayItems((params, output) -> {
 			output.accept(EASYPIA);
+			output.accept(PIA);
+			output.accept(ModBlocks.PIA_ORE_ITEM);
 		})
 		.build();
 

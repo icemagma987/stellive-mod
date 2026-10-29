@@ -2,5 +2,7 @@
   "item.stellive.easypia": "이지피아",
   "creativeTab.stellive": "Stellive",
   "key.stellive.dash": "스킬",
-  "key.category.stellive.stellive": "Stellive"
+  "key.category.stellive.stellive": "Stellive",
+  "block.stellive.pia_ore": "피아 광석",
+  "item.stellive.pia": "피아"
 }
