@@ -13,8 +13,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.material.MapColor;
 
@@ -33,11 +31,6 @@ public class ModBlocks {
 			.sound(SoundType.STONE));
 
 	public static final Item PIA_ORE_ITEM = registerBlockItem("pia_ore", PIA_ORE);
-
-	/** 월드 생성용 기능: 1개 80% / 2개 20% (PiaOreFeature 참고) */
-	public static final Feature<NoneFeatureConfiguration> PIA_ORE_FEATURE = Registry.register(
-		BuiltInRegistries.FEATURE, Identifier.fromNamespaceAndPath(EasypiaMod.MOD_ID, "pia_ore"),
-		new PiaOreFeature(NoneFeatureConfiguration.CODEC));
 
 	/** 월드 생성 (일반 돌 속에만, 청크당 70% 확률로 한 번, data/stellive/worldgen 참고) */
 	public static final ResourceKey<PlacedFeature> PIA_ORE_PLACED = ResourceKey.create(

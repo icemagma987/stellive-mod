@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block_column",
+  "allowed_placement": {
+    "type": "minecraft:matching_blocks",
+    "blocks": "minecraft:stone"
+  },
+  "direction": "up",
+  "layers": [
+    {
+      "height": {
+        "type": "minecraft:weighted_list",
+        "distribution": [
+          {
+            "data": 1,
+            "weight": 8
+          },
+          {
+            "data": 2,
+            "weight": 2
+          }
+        ]
+      },
+      "provider": {
+        "id": "stellive:pia_ore"
+      }
+    }
+  ],
+  "prioritize_tip": false
+}
