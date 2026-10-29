@@ -2,9 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "E": "minecraft:emerald",
-    "D": "minecraft:diamond",
-    "Q": "minecraft:quartz"
+    "E": "stellive:pia",
+    "D": "minecraft:quartz",
+    "Q": "minecraft:iron_ingot"
   },
   "pattern": [
     " E ",

@@ -49,7 +49,6 @@ public class DashHandler {
 	}
 
 	private static final Map<UUID, DashState> DASHING = new HashMap<>();
-	private static final Map<UUID, Long> LAST_DASH = new HashMap<>();
 
 	public static void initialize() {
 		PayloadTypeRegistry.serverboundPlay().register(DashPayload.TYPE, DashPayload.CODEC);
@@ -64,11 +63,12 @@ public class DashHandler {
 		// 이지피아를 주 손에 들고 있을 때만
 		if (!player.getMainHandItem().is(ModItems.EASYPIA)) return;
 
+		// 쿨타임 확인: 아이템 칸에 표시되는 쿨타임과 똑같은 값을 씀
+		// (예전에는 서버와 클라이언트가 시간을 따로 세서, 일시정지나 렉이 있으면
+		//  클라이언트는 대쉬하는데 서버는 쿨타임이라 거절 -> 피해/소리/파티클이 안 나오는 문제가 있었음)
+		if (player.getCooldowns().getCooldownPercent(player.getMainHandItem(), 0.0F) > 0.0F) return;
+
 		ServerLevel level = (ServerLevel) player.level();
-		long now = level.getGameTime();
-		Long last = LAST_DASH.get(player.getUUID());
-		if (last != null && now - last < COOLDOWN_TICKS) return;
-		LAST_DASH.put(player.getUUID(), now);
 
 		// 엔더 진주처럼 아이템 칸에 쿨타임 표시 (서버가 걸면 클라이언트에 자동으로 전달됨)
 		player.getCooldowns().addCooldown(player.getMainHandItem(), COOLDOWN_TICKS);

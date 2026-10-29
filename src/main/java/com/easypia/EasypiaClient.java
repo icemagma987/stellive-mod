@@ -53,7 +53,6 @@ public class EasypiaClient implements ClientModInitializer {
 		while (dashKey.consumeClick()) {
 			if (player == null || player.isSpectator()) continue;
 			if (!player.getMainHandItem().is(ModItems.EASYPIA)) continue;
-			if (clientTicks - lastDashTick < DashHandler.COOLDOWN_TICKS) continue;
 			if (player.getCooldowns().getCooldownPercent(player.getMainHandItem(), 0.0F) > 0.0F) continue;
 			if (dashStep >= 0) continue;
 
