@@ -13,6 +13,9 @@
   "entrypoints": {
     "main": [
       "com.easypia.EasypiaMod"
+    ],
+    "client": [
+      "com.easypia.EasypiaClient"
     ]
   },
   "depends": {
