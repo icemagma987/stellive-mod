@@ -16,10 +16,13 @@ import net.minecraft.world.phys.Vec3;
  * 클라이언트 쪽: R키 입력 + 플레이어 이동(대쉬)
  *
  * 대쉬 속도 표 (블록/틱). 앞부분은 일정한 속도, 끝부분은 부드럽게 감속해서
- * 중간에 뚝 끊기는 느낌이 없도록 했습니다. 합계 약 8.3칸 (이전의 약 1.5배)
+ * 중간에 뚝 끊기는 느낌이 없도록 했습니다. 합계 약 8.8칸
  */
 public class EasypiaClient implements ClientModInitializer {
-	private static final double[] DASH_SPEEDS = {1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 0.8, 0.5, 0.3};
+	private static final double[] DASH_SPEEDS = {
+		1.1, 1.1, 1.1,                                   // 최고 속도 3틱
+		1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 // 감속 10틱
+	};
 
 	private static final KeyMapping.Category CATEGORY =
 		KeyMapping.Category.register(Identifier.fromNamespaceAndPath(EasypiaMod.MOD_ID, "stellive"));

@@ -33,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
  */
 public class DashHandler {
 	/** 대쉬 판정이 유지되는 시간 (틱, 20틱 = 1초) */
-	public static final int DASH_TICKS = 12;
+	public static final int DASH_TICKS = 16;
 	/** 대쉬 재사용 대기시간 (틱) */
 	public static final int COOLDOWN_TICKS = 20;
 	/** 플레이어 주변 몇 칸까지 맞는지 */
@@ -138,7 +138,9 @@ public class DashHandler {
 	private static final int[] SLASH_COLORS = {0x269E6E, 0x68D8AE, 0xD6FCEE};
 	/** 검궤적 3개의 기울기 (도) */
 	private static final double[] SLASH_TILTS = {-35.0, 0.0, 35.0};
-	private static final int SLASH_POINTS = 20;
+	private static final int SLASH_POINTS = 32;
+	/** 검궤적 두께: 나란한 줄 3개 사이 간격 */
+	private static final double[] SLASH_ROWS = {-0.13, 0.0, 0.13};
 
 	/**
 	 * 대상 몸 앞을 가로지르는 초승달 모양 검궤적 3개를 더스트 파티클로 그립니다.
@@ -153,25 +155,32 @@ public class DashHandler {
 		Vec3 right = new Vec3(-forward.z, 0, forward.x);
 		Vec3 up = new Vec3(0, 1, 0);
 
-		double radius = Math.max(1.2, target.getBbWidth() * 0.5 + 0.9);
+		double radius = Math.max(1.6, target.getBbWidth() * 0.5 + 1.3);
 
 		for (double tiltDeg : SLASH_TILTS) {
 			double tilt = Math.toRadians(tiltDeg);
 			// 검이 지나가는 방향 (오른쪽을 기준으로 기울임)
 			Vec3 axis = right.scale(Math.cos(tilt)).add(up.scale(Math.sin(tilt)));
+			// 두께 방향 (검궤적 면에 수직)
+			Vec3 normal = axis.cross(forward).normalize();
 
 			for (int i = 0; i < SLASH_POINTS; i++) {
 				double t = i / (double) (SLASH_POINTS - 1);      // 0..1
-				double theta = (t - 0.5) * 2.2;                   // -1.1..1.1 라디안
+				double theta = (t - 0.5) * 3.0;                   // -1.5..1.5 라디안 (더 긴 궤적)
 				double edge = Math.abs(t - 0.5) * 2.0;              // 0 = 가운데, 1 = 끝
 				Vec3 p = center
 					.add(axis.scale(radius * Math.sin(theta)))
 					.add(forward.scale(-radius * (1.0 - Math.cos(theta)) * 0.5));
 
 				int color = edge < 0.35 ? SLASH_COLORS[2] : (edge < 0.7 ? SLASH_COLORS[1] : SLASH_COLORS[0]);
-				float scale = (float) (2.6 - edge * 1.4);          // 가운데 2.6, 끝 1.2
+				float scale = (float) (3.0 - edge * 1.6);          // 가운데 3.0, 끝 1.4
 
-				level.sendParticles(new DustParticleOptions(color, scale), p.x, p.y, p.z, 1, 0.0, 0.0, 0.0, 0.0);
+				DustParticleOptions dust = new DustParticleOptions(color, scale);
+				for (double row : SLASH_ROWS) {
+					// 끝으로 갈수록 가늘어지게
+					Vec3 q = p.add(normal.scale(row * (1.0 - edge * 0.6)));
+					level.sendParticles(dust, q.x, q.y, q.z, 1, 0.0, 0.0, 0.0, 0.0);
+				}
 			}
 		}
 	}
