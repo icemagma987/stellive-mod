@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -18,10 +19,10 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 함마린 R키 스킬
@@ -86,7 +87,11 @@ public class HammarinHandler {
 				target.hurtServer(level, source, DAMAGE_PER_TICK);
 
 				if (t % KNOCKBACK_EVERY == 0) {
-					target.knockback(KNOCKBACK_STRENGTH, player.getX() - target.getX(), player.getZ() - target.getZ());
+					// 플레이어 반대쪽으로 밀어냄
+					Vec3 away = new Vec3(target.getX() - player.getX(), 0, target.getZ() - player.getZ());
+					if (away.lengthSqr() < 1.0E-4) away = new Vec3(1, 0, 0);
+					away = away.normalize().scale(KNOCKBACK_STRENGTH);
+					target.push(away.x, target.onGround() ? 0.25 : 0.0, away.z);
 				}
 
 				level.sendParticles(ParticleTypes.CRIT,
@@ -101,8 +106,10 @@ public class HammarinHandler {
 	 * (아이템 액자, 그림 등은 원래 살아있는 엔티티가 아니라 안 맞음)
 	 * 제외: 갑옷 거치대, 내가 길들인 동물
 	 */
+	private static final Identifier ARMOR_STAND_ID = Identifier.fromNamespaceAndPath("minecraft", "armor_stand");
+
 	private static boolean isEnemy(LivingEntity e, ServerPlayer player) {
-		if (e.getType() == EntityType.ARMOR_STAND) return false;
+		if (ARMOR_STAND_ID.equals(BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()))) return false;
 		if (e instanceof OwnableEntity owned && owned.getOwner() == player) return false;
 		return true;
 	}
