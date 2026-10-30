@@ -53,7 +53,14 @@ public class DashHandler {
 	public static void initialize() {
 		PayloadTypeRegistry.serverboundPlay().register(DashPayload.TYPE, DashPayload.CODEC);
 
-		ServerPlayNetworking.registerGlobalReceiver(DashPayload.TYPE, (payload, context) -> startDash(context.player()));
+		ServerPlayNetworking.registerGlobalReceiver(DashPayload.TYPE, (payload, context) -> {
+			// R키: 들고 있는 아이템에 따라 다른 스킬
+			if (context.player().getMainHandItem().is(ModItems.HAMMARIN)) {
+				HammarinHandler.start(context.player());
+			} else {
+				startDash(context.player());
+			}
+		});
 
 		ServerTickEvents.END_SERVER_TICK.register(DashHandler::tick);
 	}

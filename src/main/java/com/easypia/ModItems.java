@@ -58,6 +58,26 @@ public class ModItems {
 	public static final Item PIA = register("pia", Item::new, new Item.Properties());
 
 	/**
+	 * 함마린 (빗자루)
+	 * - 공격력 5.5 = 1(기본) + 4.5,  공격속도 1.7 = 4.0 - 2.3
+	 * - 내구도 무한 (툴팁 숨김), 인챈트 불가
+	 * - R키 스킬 (HammarinHandler)
+	 */
+	public static final Item HAMMARIN = register("hammarin", Item::new,
+		new Item.Properties()
+			.stacksTo(1)
+			.component(DataComponents.UNBREAKABLE, Unit.INSTANCE)
+			.component(DataComponents.TOOLTIP_DISPLAY, TooltipDisplay.DEFAULT.withHidden(DataComponents.UNBREAKABLE, true))
+			.attributes(ItemAttributeModifiers.builder()
+				.add(Attributes.ATTACK_DAMAGE,
+					new AttributeModifier(Identifier.fromNamespaceAndPath("minecraft", "base_attack_damage"), 4.5, AttributeModifier.Operation.ADD_VALUE),
+					EquipmentSlotGroup.MAINHAND)
+				.add(Attributes.ATTACK_SPEED,
+					new AttributeModifier(Identifier.fromNamespaceAndPath("minecraft", "base_attack_speed"), -2.3, AttributeModifier.Operation.ADD_VALUE),
+					EquipmentSlotGroup.MAINHAND)
+				.build()));
+
+	/**
 	 * 건틀릿
 	 * - 왼손(보조 손)에 들면 공격 피해 +2
 	 * - 주 손 이지피아 + 왼손 건틀릿 = 저항 1, 속도 1 (GauntletHandler)
@@ -84,6 +104,7 @@ public class ModItems {
 		.title(Component.translatable("creativeTab.stellive"))
 		.displayItems((params, output) -> {
 			output.accept(EASYPIA);
+			output.accept(HAMMARIN);
 			output.accept(GAUNTLET);
 			output.accept(PIA);
 			output.accept(ModBlocks.PIA_ORE_ITEM);
@@ -138,6 +159,14 @@ public class ModItems {
 		0x9EEBCB  // 릿 (= 아)
 	};
 
+	/** 함마린 이름 색: 왼쪽 진한 파랑 -> 오른쪽 연한 하늘색 (리본 색) */
+	private static final String HAMMARIN_NAME = "함마린";
+	private static final int[] HAMMARIN_NAME_COLORS = {
+		0x1E50C8, // 함
+		0x4A8CF0, // 마
+		0x9CC8FF  // 린
+	};
+
 	private static Component gradientName(String text, int[] colors) {
 		MutableComponent name = Component.empty();
 		for (int i = 0; i < text.length(); i++) {
@@ -153,6 +182,7 @@ public class ModItems {
 		// 아이템 기본 이름을 그라데이션 이름으로 교체
 		DefaultItemComponentEvents.MODIFY.register(context -> {
 			context.modify(EASYPIA, builder -> builder.set(DataComponents.ITEM_NAME, gradientName(EASYPIA_NAME, EASYPIA_NAME_COLORS)));
+			context.modify(HAMMARIN, builder -> builder.set(DataComponents.ITEM_NAME, gradientName(HAMMARIN_NAME, HAMMARIN_NAME_COLORS)));
 			context.modify(GAUNTLET, builder -> builder.set(DataComponents.ITEM_NAME, gradientName(GAUNTLET_NAME, GAUNTLET_NAME_COLORS)));
 		});
 	}

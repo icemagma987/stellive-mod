@@ -52,6 +52,13 @@ public class EasypiaClient implements ClientModInitializer {
 
 		while (dashKey.consumeClick()) {
 			if (player == null || player.isSpectator()) continue;
+			// 함마린: 이동 없이 서버에 스킬 신호만 보냄
+			if (player.getMainHandItem().is(ModItems.HAMMARIN)) {
+				if (player.getCooldowns().getCooldownPercent(player.getMainHandItem(), 0.0F) <= 0.0F) {
+					ClientPlayNetworking.send(DashPayload.INSTANCE);
+				}
+				continue;
+			}
 			if (!player.getMainHandItem().is(ModItems.EASYPIA)) continue;
 			if (player.getCooldowns().getCooldownPercent(player.getMainHandItem(), 0.0F) > 0.0F) continue;
 			if (dashStep >= 0) continue;

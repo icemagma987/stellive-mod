@@ -14,6 +14,7 @@ public class EasypiaMod implements ModInitializer {
 		ModItems.initialize();
 		DashHandler.initialize();
 		GauntletHandler.initialize();
+		HammarinHandler.initialize();
 		LOGGER.info("Stellive 모드 로드 완료!");
 	}
 }
