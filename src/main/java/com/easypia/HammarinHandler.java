@@ -57,7 +57,7 @@ public class HammarinHandler {
 
 		player.getCooldowns().addCooldown(player.getMainHandItem(), COOLDOWN_TICKS);
 		// 신속 3 = amplifier 2
-		player.addEffect(new MobEffectInstance(MobEffects.SPEED, SKILL_TICKS, 2));
+		player.addEffect(new MobEffectInstance(MobEffects.SPEED, SKILL_TICKS, 2, false, false, true)); // 파티클 없음, 아이콘만 표시
 		ACTIVE.put(player.getUUID(), 0);
 	}
 
