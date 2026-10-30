@@ -18,11 +18,15 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.component.BlocksAttacks;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.TooltipDisplay;
 
 public class ModItems {
@@ -53,6 +57,22 @@ public class ModItems {
 	/** 피아 (피아 광석에서 나오는 재료) */
 	public static final Item PIA = register("pia", Item::new, new Item.Properties());
 
+	/**
+	 * 건틀릿
+	 * - 왼손(보조 손)에 들면 공격 피해 +2
+	 * - 주 손 이지피아 + 왼손 건틀릿 = 저항 1, 속도 1 (GauntletHandler)
+	 * - 무기를 든 상대에게 받는 피해 50% 감소 (mixin/LivingEntityMixin)
+	 */
+	public static final Item GAUNTLET = register("gauntlet", Item::new,
+		new Item.Properties()
+			.stacksTo(1)
+			.attributes(ItemAttributeModifiers.builder()
+				.add(Attributes.ATTACK_DAMAGE,
+					new AttributeModifier(Identifier.fromNamespaceAndPath(EasypiaMod.MOD_ID, "gauntlet_attack_damage"),
+						2.0, AttributeModifier.Operation.ADD_VALUE),
+					EquipmentSlotGroup.OFFHAND)
+				.build()));
+
 	// 크리에이티브 인벤토리 전용 탭 (오른쪽 위 페이지 넘기기에서 보이는 탭)
 	public static final ResourceKey<CreativeModeTab> STELLIVE_TAB_KEY = ResourceKey.create(
 		BuiltInRegistries.CREATIVE_MODE_TAB.key(),
@@ -64,6 +84,7 @@ public class ModItems {
 		.title(Component.translatable("creativeTab.stellive"))
 		.displayItems((params, output) -> {
 			output.accept(EASYPIA);
+			output.accept(GAUNTLET);
 			output.accept(PIA);
 			output.accept(ModBlocks.PIA_ORE_ITEM);
 		})

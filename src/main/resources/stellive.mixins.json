@@ -3,7 +3,8 @@
   "package": "com.easypia.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ItemCooldownsMixin"
+    "ItemCooldownsMixin",
+    "LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 0
