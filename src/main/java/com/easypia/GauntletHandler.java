@@ -3,13 +3,17 @@ package com.easypia;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -20,6 +24,9 @@ import net.minecraft.world.item.Items;
 public class GauntletHandler {
 	private static int tickCounter = 0;
 
+	/** 창 (minecraft:spears 태그) */
+	private static final TagKey<Item> SPEARS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("minecraft", "spears"));
+
 	public static void initialize() {
 		ServerTickEvents.END_SERVER_TICK.register(GauntletHandler::tick);
 	}
@@ -28,9 +35,7 @@ public class GauntletHandler {
 		if (++tickCounter % 10 != 0) return; // 0.5초마다 확인
 
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-			boolean active = player.isAlive()
-				&& player.getOffhandItem().is(ModItems.GAUNTLET)
-				&& player.getMainHandItem().is(ModItems.EASYPIA);
+			boolean active = player.isAlive() && hasSet(player);
 
 			update(player, MobEffects.RESISTANCE, active);
 			update(player, MobEffects.SPEED, active);
@@ -52,13 +57,22 @@ public class GauntletHandler {
 		}
 	}
 
-	/** 공격한 상대가 무기를 들고 있는지 */
+	/** 주 손 이지피아 + 왼손 건틀릿인지 */
+	public static boolean hasSet(LivingEntity entity) {
+		return entity.getOffhandItem().is(ModItems.GAUNTLET) && entity.getMainHandItem().is(ModItems.EASYPIA);
+	}
+
+	/** 공격한 상대가 무기(검, 도끼, 곡괭이, 삽, 괭이, 창, 철퇴, 삼지창, 활, 석궁)를 들고 있는지 */
 	public static boolean isHoldingWeapon(LivingEntity attacker) {
 		ItemStack stack = attacker.getMainHandItem();
 		if (stack.isEmpty()) return false;
 		return stack.has(DataComponents.WEAPON)
 			|| stack.is(ItemTags.SWORDS)
 			|| stack.is(ItemTags.AXES)
+			|| stack.is(ItemTags.PICKAXES)
+			|| stack.is(ItemTags.SHOVELS)
+			|| stack.is(ItemTags.HOES)
+			|| stack.is(SPEARS)
 			|| stack.is(Items.BOW)
 			|| stack.is(Items.CROSSBOW)
 			|| stack.is(Items.TRIDENT)

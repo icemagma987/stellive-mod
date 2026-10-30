@@ -130,11 +130,19 @@ public class ModItems {
 		0x9EEBCB  // 아 - 연한 민트 초록
 	};
 
-	private static Component gradientName() {
+	/** 건틀릿 이름 색: 이지피아의 "지피아" 부분 색을 그대로 사용 */
+	private static final String GAUNTLET_NAME = "건틀릿";
+	private static final int[] GAUNTLET_NAME_COLORS = {
+		0x34B07A, // 건 (= 지)
+		0x62D3A2, // 틀 (= 피)
+		0x9EEBCB  // 릿 (= 아)
+	};
+
+	private static Component gradientName(String text, int[] colors) {
 		MutableComponent name = Component.empty();
-		for (int i = 0; i < EASYPIA_NAME.length(); i++) {
-			int color = EASYPIA_NAME_COLORS[Math.min(i, EASYPIA_NAME_COLORS.length - 1)];
-			name.append(Component.literal(String.valueOf(EASYPIA_NAME.charAt(i))).withColor(color));
+		for (int i = 0; i < text.length(); i++) {
+			int color = colors[Math.min(i, colors.length - 1)];
+			name.append(Component.literal(String.valueOf(text.charAt(i))).withColor(color));
 		}
 		return name;
 	}
@@ -143,8 +151,9 @@ public class ModItems {
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, STELLIVE_TAB_KEY, STELLIVE_TAB);
 
 		// 아이템 기본 이름을 그라데이션 이름으로 교체
-		DefaultItemComponentEvents.MODIFY.register(context ->
-			context.modify(EASYPIA, builder -> builder.set(DataComponents.ITEM_NAME, gradientName()))
-		);
+		DefaultItemComponentEvents.MODIFY.register(context -> {
+			context.modify(EASYPIA, builder -> builder.set(DataComponents.ITEM_NAME, gradientName(EASYPIA_NAME, EASYPIA_NAME_COLORS)));
+			context.modify(GAUNTLET, builder -> builder.set(DataComponents.ITEM_NAME, gradientName(GAUNTLET_NAME, GAUNTLET_NAME_COLORS)));
+		});
 	}
 }
