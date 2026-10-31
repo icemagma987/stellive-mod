@@ -148,7 +148,7 @@ public class EasypiaClient implements ClientModInitializer {
 	 */
 	private void onStartTick(Minecraft client) {
 		LocalPlayer player = client.player;
-		if (player == null || client.screen != null) return;
+		if (player == null) return; // 화면(인벤토리 등)이 열려 있으면 좌클릭이 키 입력으로 들어오지 않음
 		ItemStack held = player.getMainHandItem();
 		if (!held.is(ModItems.SARANGI)) return;
 
