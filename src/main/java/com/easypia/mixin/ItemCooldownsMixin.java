@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 public class ItemCooldownsMixin {
 	@Inject(method = "isOnCooldown", at = @At("HEAD"), cancellable = true)
 	private void stellive$skillCooldownDoesNotBlockUse(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-		if (stack.is(ModItems.EASYPIA)) {
+		if (stack.is(ModItems.EASYPIA) || stack.is(ModItems.SARANGI)) {
 			cir.setReturnValue(false);
 		}
 	}

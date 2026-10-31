@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "N": "minecraft:netherite_ingot",
+    "I": "minecraft:iron_ingot",
+    "T": "stellive:peto"
+  },
+  "pattern": [
+    "NIT",
+    "  I"
+  ],
+  "result": {
+    "id": "stellive:sarangi",
+    "count": 1
+  }
+}

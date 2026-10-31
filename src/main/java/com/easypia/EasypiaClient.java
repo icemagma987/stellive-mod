@@ -10,6 +10,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -35,6 +36,16 @@ public class EasypiaClient implements ClientModInitializer {
 	private long lastDashTick = -1000;
 	private long clientTicks = 0;
 
+	// ---- 사랑이 (권총) ----
+	/** 뒤로 대쉬 속도 (블록/틱): 부드럽게 감속 */
+	private static final double[] BACK_SPEEDS = {1.0, 0.95, 0.85, 0.75, 0.65, 0.55, 0.45, 0.35, 0.25, 0.15, 0.08};
+	/** 뒤로 대쉬 위쪽 속도: 처음에 살짝 떠오름 */
+	private static final double[] BACK_UP = {0.34, 0.28, 0.22, 0.16, 0.11, 0.07, 0.04, 0.02, 0.0, 0.0, 0.0};
+	private int backStep = -1;
+	private Vec3 backDir = Vec3.ZERO;
+	private long lastShotTick = -1000;
+	private boolean reloading = false;
+
 	@Override
 	public void onInitializeClient() {
 		dashKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
@@ -43,6 +54,7 @@ public class EasypiaClient implements ClientModInitializer {
 			CATEGORY
 		));
 
+		ClientTickEvents.START_CLIENT_TICK.register(this::onStartTick);
 		ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
 	}
 
@@ -52,6 +64,21 @@ public class EasypiaClient implements ClientModInitializer {
 
 		while (dashKey.consumeClick()) {
 			if (player == null || player.isSpectator()) continue;
+			// 사랑이: 뒤로 대쉬
+			if (player.getMainHandItem().is(ModItems.SARANGI)) {
+				if (player.getCooldowns().getCooldownPercent(player.getMainHandItem(), 0.0F) > 0.0F) continue;
+				if (backStep >= 0) continue;
+				Vec3 look = player.getLookAngle();
+				Vec3 flat = new Vec3(look.x, 0, look.z);
+				if (flat.lengthSqr() < 1.0E-4) {
+					float yaw = player.getYRot() * ((float) Math.PI / 180F);
+					flat = new Vec3(-Math.sin(yaw), 0, Math.cos(yaw));
+				}
+				backDir = flat.normalize().scale(-1.0);
+				backStep = 0;
+				ClientPlayNetworking.send(DashPayload.INSTANCE);
+				continue;
+			}
 			// 함마린: 이동 없이 서버에 스킬 신호만 보냄
 			if (player.getMainHandItem().is(ModItems.HAMMARIN)) {
 				if (player.getCooldowns().getCooldownPercent(player.getMainHandItem(), 0.0F) <= 0.0F) {
@@ -82,7 +109,24 @@ public class EasypiaClient implements ClientModInitializer {
 
 		if (player == null) {
 			dashStep = -1;
+			backStep = -1;
 			return;
+		}
+
+		// 사랑이 뒤로 대쉬 (매 틱 속도를 직접 정해서 끊기지 않게)
+		if (backStep >= 0) {
+			double speed = BACK_SPEEDS[backStep];
+			player.setDeltaMovement(backDir.x * speed, BACK_UP[backStep], backDir.z * speed);
+			player.resetFallDistance();
+			backStep++;
+			if (backStep >= BACK_SPEEDS.length) backStep = -1;
+		}
+
+		// 사랑이 장전 상태 (탄을 다 쓰면 장전 시작, 내구도 막대가 다 차면 끝)
+		ItemStack held = player.getMainHandItem();
+		if (held.is(ModItems.SARANGI)) {
+			if (held.getDamageValue() >= held.getMaxDamage()) reloading = true;
+			else if (held.getDamageValue() == 0) reloading = false;
 		}
 
 		if (dashStep >= 0) {
@@ -96,5 +140,33 @@ public class EasypiaClient implements ClientModInitializer {
 			dashStep++;
 			if (dashStep >= DASH_SPEEDS.length) dashStep = -1;
 		}
+	}
+
+	/**
+	 * 사랑이 좌클릭 발사.
+	 * 게임이 좌클릭을 처리하기 전(틱 시작)에 클릭을 가져가서 블록 부수기/근접 공격 대신 총을 쏩니다.
+	 */
+	private void onStartTick(Minecraft client) {
+		LocalPlayer player = client.player;
+		if (player == null || client.screen != null) return;
+		ItemStack held = player.getMainHandItem();
+		if (!held.is(ModItems.SARANGI)) return;
+
+		boolean clicked = false;
+		while (client.options.keyAttack.consumeClick()) clicked = true;
+		if (!clicked || player.isSpectator()) return;
+
+		if (clientTicks - lastShotTick < GunHandler.FIRE_INTERVAL) return;
+		if (reloading || held.getDamageValue() >= held.getMaxDamage()) return;
+		lastShotTick = clientTicks;
+
+		ClientPlayNetworking.send(FirePayload.INSTANCE);
+
+		// 반동: 화면이 위로 튀고 좌우로 살짝 흔들림 (조준 중이면 줄어듦)
+		boolean aiming = GunHandler.isAiming(player);
+		float pitchKick = aiming ? 1.0F : 2.8F;
+		float yawKick = (player.getRandom().nextFloat() * 2.0F - 1.0F) * (aiming ? 0.3F : 0.9F);
+		player.setXRot(player.getXRot() - pitchKick);
+		player.setYRot(player.getYRot() + yawKick);
 	}
 }

@@ -57,6 +57,8 @@ public class DashHandler {
 			// R키: 들고 있는 아이템에 따라 다른 스킬
 			if (context.player().getMainHandItem().is(ModItems.HAMMARIN)) {
 				HammarinHandler.start(context.player());
+			} else if (context.player().getMainHandItem().is(ModItems.SARANGI)) {
+				GunHandler.startDash(context.player());
 			} else {
 				startDash(context.player());
 			}
@@ -135,11 +137,18 @@ public class DashHandler {
 
 				target.hurtServer(level, player.damageSources().playerAttack(player), damage);
 
+				// 맞힐 때 소리: minecraft:entity.player.attack.sweep, 볼륨 10, 피치 2
+				level.playSound((Player) null, target.getX(), target.getY(), target.getZ(),
+					HIT_SOUND, SoundSource.PLAYERS, 10.0F, 2.0F);
+
 				// 검궤적 3개 (칼날 색 더스트 파티클)
 				spawnSlashes(level, player, target);
 			}
 		}
 	}
+
+	private static final SoundEvent HIT_SOUND =
+		SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath("minecraft", "entity.player.attack.sweep"));
 
 	private static final SoundEvent DASH_SOUND =
 		SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath("minecraft", "entity.breeze.wind_burst"));

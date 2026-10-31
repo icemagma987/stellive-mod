@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "stellive:hammarin"
+    "stellive:hammarin",
+    "stellive:bullet"
   ]
 }

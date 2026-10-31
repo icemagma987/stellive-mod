@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "minecraft:light_blue_wool_stairs",
+    "G": "minecraft:enchanted_golden_apple",
+    "K": "minecraft:pink_wool_stairs",
+    "B": "minecraft:light_blue_wool",
+    "P": "minecraft:pink_wool",
+    "Y": "minecraft:yellow_wool"
+  },
+  "pattern": [
+    "AGK",
+    "BPP",
+    "PPY"
+  ],
+  "result": {
+    "id": "stellive:peto",
+    "count": 1
+  }
+}

@@ -13,6 +13,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,6 +23,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -43,6 +46,10 @@ public class HammarinHandler {
 	/** 매 틱 피해가 무적 시간에 막히지 않도록 만든 전용 피해 종류 (data/stellive/damage_type/hammarin.json) */
 	private static final ResourceKey<DamageType> DAMAGE_TYPE =
 		ResourceKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(EasypiaMod.MOD_ID, "hammarin"));
+
+	/** 스킬 중 매 틱 소리: minecraft:block.cherry_wood.place */
+	private static final SoundEvent SKILL_SOUND =
+		SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath("minecraft", "block.cherry_wood.place"));
 
 	private static final Map<UUID, Integer> ACTIVE = new HashMap<>();
 
@@ -76,6 +83,11 @@ public class HammarinHandler {
 			entry.setValue(t + 1);
 
 			ServerLevel level = (ServerLevel) player.level();
+
+			// 스킬 사용 중 매 틱 소리
+			level.playSound((Player) null, player.getX(), player.getY(), player.getZ(),
+				SKILL_SOUND, SoundSource.PLAYERS, 10.0F, 2.0F); // 볼륨 10, 피치 2
+
 			DamageSource source = new DamageSource(
 				level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DAMAGE_TYPE), player);
 

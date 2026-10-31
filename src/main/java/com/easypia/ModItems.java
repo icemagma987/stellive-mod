@@ -57,6 +57,18 @@ public class ModItems {
 	/** 피아 (피아 광석에서 나오는 재료) */
 	public static final Item PIA = register("pia", Item::new, new Item.Properties());
 
+	/** 페토 (사랑이 재료) */
+	public static final Item PETO = register("peto", Item::new, new Item.Properties());
+
+	/**
+	 * 사랑이 (권총)
+	 * - 내구도 17 = 탄창 17발 (막대로 남은 탄 표시, 실제로 부서지지는 않음)
+	 * - 인챈트 불가
+	 * - 발사/장전/R키 스킬: GunHandler
+	 */
+	public static final Item SARANGI = register("sarangi", SarangiItem::new,
+		new Item.Properties().durability(GunHandler.MAGAZINE));
+
 	/**
 	 * 함마린 (빗자루)
 	 * - 공격력 5.5 = 1(기본) + 4.5,  공격속도 1.7 = 4.0 - 2.3
@@ -104,8 +116,10 @@ public class ModItems {
 		.title(Component.translatable("creativeTab.stellive"))
 		.displayItems((params, output) -> {
 			output.accept(EASYPIA);
+			output.accept(SARANGI);
 			output.accept(HAMMARIN);
 			output.accept(GAUNTLET);
+			output.accept(PETO);
 			output.accept(PIA);
 			output.accept(ModBlocks.PIA_ORE_ITEM);
 		})
@@ -167,6 +181,14 @@ public class ModItems {
 		0x9CC8FF  // 린
 	};
 
+	/** 사랑이 이름 색: 총 색 (진한 분홍 -> 연한 분홍) */
+	private static final String SARANGI_NAME = "사랑이";
+	private static final int[] SARANGI_NAME_COLORS = {
+		0xD4547E, // 사
+		0xF0849F, // 랑
+		0xFFB8CC  // 이
+	};
+
 	private static Component gradientName(String text, int[] colors) {
 		MutableComponent name = Component.empty();
 		for (int i = 0; i < text.length(); i++) {
@@ -182,6 +204,7 @@ public class ModItems {
 		// 아이템 기본 이름을 그라데이션 이름으로 교체
 		DefaultItemComponentEvents.MODIFY.register(context -> {
 			context.modify(EASYPIA, builder -> builder.set(DataComponents.ITEM_NAME, gradientName(EASYPIA_NAME, EASYPIA_NAME_COLORS)));
+			context.modify(SARANGI, builder -> builder.set(DataComponents.ITEM_NAME, gradientName(SARANGI_NAME, SARANGI_NAME_COLORS)));
 			context.modify(HAMMARIN, builder -> builder.set(DataComponents.ITEM_NAME, gradientName(HAMMARIN_NAME, HAMMARIN_NAME_COLORS)));
 			context.modify(GAUNTLET, builder -> builder.set(DataComponents.ITEM_NAME, gradientName(GAUNTLET_NAME, GAUNTLET_NAME_COLORS)));
 		});
